@@ -38,4 +38,15 @@ ip netns exec SITE1 ip addr add 172.16.1.2/30 dev gre1
 ip netns exec SITE2 ip tunnel add gre2 mode gre local 10.0.2.2 remote 10.0.2.1 ttl 255
 ip netns exec SITE2 ip link set gre2 up
 ip netns exec SITE2 ip addr add 172.16.2.2/30 dev gre2
+# IPsec between HUB and SITE1
+ip netns exec HUB ip xfrm state add src 10.0.1.1 dst 10.0.1.2 proto esp spi 0x1001 mode tunnel auth sha256 0x0102030405060708090a0b0c0d0e0f10 enc aes 0x0102030405060708090a0b0c0d0e0f10
+ip netns exec HUB ip xfrm state add src 10.0.1.2 dst 10.0.1.1 proto esp spi 0x1002 mode tunnel auth sha256 0x0102030405060708090a0b0c0d0e0f10 enc aes 0x0102030405060708090a0b0c0d0e0f10
+ip netns exec HUB ip xfrm policy add src 10.0.1.1 dst 10.0.1.2 dir out tmpl proto esp mode tunnel
+ip netns exec HUB ip xfrm policy add src 10.0.1.2 dst 10.0.1.1 dir in tmpl proto esp mode tunnel
+
+# IPsec between HUB and SITE2
+ip netns exec HUB ip xfrm state add src 10.0.2.1 dst 10.0.2.2 proto esp spi 0x2001 mode tunnel auth sha256 0x0102030405060708090a0b0c0d0e0f10 enc aes 0x0102030405060708090a0b0c0d0e0f10
+ip netns exec HUB ip xfrm state add src 10.0.2.2 dst 10.0.2.1 proto esp spi 0x2002 mode tunnel auth sha256 0x0102030405060708090a0b0c0d0e0f10 enc aes 0x0102030405060708090a0b0c0d0e0f10
+ip netns exec HUB ip xfrm policy add src 10.0.2.1 dst 10.0.2.2 dir out tmpl proto esp mode tunnel
+ip netns exec HUB ip xfrm policy add src 10.0.2.2 dst 10.0.2.1 dir in tmpl proto esp mode tunnel
 echo "Lab ready!"
