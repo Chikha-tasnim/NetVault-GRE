@@ -13,7 +13,7 @@ This lab recreates a real corporate WAN architecture where:
 - **IPsec** provides the encryption layer over each tunnel
 - Sites discover each other automatically via **OSPF dynamic routing**
 
----
+----
 
 ## Network Topology
 SITE1 (10.0.1.2)
